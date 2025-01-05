@@ -3,12 +3,10 @@
 import express from 'express';
 import pino from 'pino-http';
 import cors from 'cors';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { getEnvVar } from './utils/getEnvVar.js';
 
 // Читаємо змінну оточення PORT
-const PORT = Number(process.env.PORT);
+const PORT = Number(getEnvVar('PORT', '3000'));
 
 export const startServer = () => {
   const app = express();
