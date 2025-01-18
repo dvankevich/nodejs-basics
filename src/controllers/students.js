@@ -9,6 +9,7 @@ import createHttpError from 'http-errors';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
 export const getStudentsController = async (req, res, next) => {
   try {
@@ -96,10 +97,16 @@ export const patchStudentController = async (req, res, next) => {
   const { studentId } = req.params;
   const photo = req.file;
 
-  console.log('photo', photo);
-  console.log('req.body', req.body);
+  let photoUrl;
 
-  const result = await updateStudent(studentId, req.body);
+  if (photo) {
+    photoUrl = await saveFileToUploadDir(photo);
+  }
+
+  const result = await updateStudent(studentId, {
+    ...req.body,
+    photo: photoUrl,
+  });
 
   if (!result) {
     next(createHttpError(404, 'Student not found'));
